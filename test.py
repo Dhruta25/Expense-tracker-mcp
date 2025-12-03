@@ -44,6 +44,20 @@ def delete_expenses(id:int):
         cur = c.execute("DELETE FROM expenses WHERE id = ?",(id,))
         return {'status':'ok','rows_deleted':cur.rowcount}
 
+@mcp.tool()
+def expenses_range(start_date,end_date):
+    with sqlite3.connect(DB_PATH) as c:
+        cur = c.execute("SELECT id,date,amount,category,subcategory,note FROM expenses WHERE date BETWEEN ? AND ? ORDER BY id ASC",
+        (start_date,end_date))
+        cols = [d[0] for d in cur.description]
+        return [dict(zip(cols,r)) for r in cur.fetchall()]
+
+@mcp.tool()
+def update_expense(date,amount,category,subcategory="",note=""):
+    with sqlite3.connect(DB_PATH) as c:
+        cur = c.execute("UPDATE expenses SET amount=?, category=?, subcategory=?,notes=? WHERE date=?",
+                        (amount,category,subcategory,note,date))
+        return {"status":"ok"}
 
 
 if __name__ == "__main__":
