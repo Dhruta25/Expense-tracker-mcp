@@ -3,7 +3,7 @@ import sqlite3
 from fastmcp import FastMCP
 import os
 DB_PATH = os.path.join(os.path.dirname(__file__),"expenses.db")
-
+CATEGORIES_PATH = os.path.join(os.path.dirname(__file__),"categories.json")
 mcp = FastMCP("Expense tracker")
 
 def init_db():
@@ -59,6 +59,10 @@ def update_expense(date,amount,category,subcategory="",note=""):
                         (amount,category,subcategory,note,date))
         return {"status":"ok"}
 
+@mcp.tool()
+def resources():
+    with open(CATEGORIES_PATH,"r",encoding="utf-8",) as f:
+        return f.read()
 
 if __name__ == "__main__":
     mcp.run()
